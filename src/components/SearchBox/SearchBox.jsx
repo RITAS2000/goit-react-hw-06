@@ -9,6 +9,7 @@ export default function SearchBox() {
   const handleChange = (event) => {
     dispatch(changeFilter(event.target.value));
   };
+
   return (
     <div className={css.container}>
       <label className={css.label}>

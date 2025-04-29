@@ -3,14 +3,16 @@ import { IoMdPerson } from 'react-icons/io';
 import { AiFillPhone } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteContact } from '../../redux/contactsSlice.js';
+import { useDebounce } from 'use-debounce';
 
 export default function Contact() {
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.items);
   const filter = useSelector((state) => state.filters.enter);
+  const [debouncedFilter] = useDebounce(filter, 300);
 
   const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase()),
+    contact.name.toLowerCase().includes(debouncedFilter.toLowerCase()),
   );
 
   if (!contacts) return null;

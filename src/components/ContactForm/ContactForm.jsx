@@ -3,6 +3,9 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AiFillPhone } from 'react-icons/ai';
 import { IoMdPerson } from 'react-icons/io';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice.js';
+import { nanoid } from 'nanoid';
 
 const initialValues = {
   name: '',
@@ -19,11 +22,20 @@ const ContactFormSchema = Yup.object().shape({
     .required('Required'),
 });
 
-export default function ContactForm({ onAdd }) {
+export default function ContactForm() {
+  const dispatch = useDispatch();
+
   const handleSubmit = (values, actions) => {
-    onAdd(values);
+    dispatch(
+      addContact({
+        id: nanoid(),
+        name: values.name,
+        number: values.number,
+      }),
+    );
     actions.resetForm();
   };
+
   return (
     <Formik
       initialValues={initialValues}

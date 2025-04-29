@@ -1,21 +1,45 @@
 import css from './Contact.module.css';
 import { IoMdPerson } from 'react-icons/io';
 import { AiFillPhone } from 'react-icons/ai';
-export default function Contact({ name, phone, onClick }) {
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteContact } from '../../redux/contactsSlice.js';
+
+export default function Contact() {
+  const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector((state) => state.filters.enter);
+
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(filter.toLowerCase()),
+  );
+
+  if (!contacts) return null;
+
   return (
-    <div className={css.container}>
-      <div className={css.textContainer}>
-        <div className={css.iconAndText}>
-          <IoMdPerson className={css.icon} /> <p className={css.text}>{name}</p>
-        </div>
-        <div className={css.iconAndText}>
-          <AiFillPhone className={css.icon} />
-          <p className={css.text}>{phone}</p>
-        </div>
-      </div>
-      <button className={css.button} type="button" onClick={onClick}>
-        Delete
-      </button>
-    </div>
+    <>
+      {filteredContacts.map((contact) => (
+        <li key={contact.id}>
+          <div className={css.container}>
+            <div className={css.textContainer}>
+              <div className={css.iconAndText}>
+                <IoMdPerson className={css.icon} />{' '}
+                <p className={css.text}>{contact.name}</p>
+              </div>
+              <div className={css.iconAndText}>
+                <AiFillPhone className={css.icon} />
+                <p className={css.text}>{contact.number}</p>
+              </div>
+            </div>
+            <button
+              className={css.button}
+              type="button"
+              onClick={() => dispatch(deleteContact(contact.id))}
+            >
+              Delete
+            </button>
+          </div>
+        </li>
+      ))}
+    </>
   );
 }

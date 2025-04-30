@@ -1,8 +1,11 @@
 import css from './Contact.module.css';
 import { IoMdPerson } from 'react-icons/io';
 import { AiFillPhone } from 'react-icons/ai';
+import { useDispatch } from 'react-redux';
+import { deleteContact } from '../../redux/contactsSlice.js';
 
-export default function Contact({ onDelete, id, name, number }) {
+export default function Contact({ id, name, number }) {
+  const dispatch = useDispatch();
   return (
     <>
       <li key={id} className={css.flyIn}>
@@ -20,7 +23,15 @@ export default function Contact({ onDelete, id, name, number }) {
           <button
             className={css.button}
             type="button"
-            onClick={() => onDelete(id)}
+            // onClick={() => dispatch(deleteContact(contact.id))}
+            onClick={() => {
+              const confirmed = window.confirm(
+                `Are you sure you want to delete ${name}?`,
+              );
+              if (confirmed) {
+                dispatch(deleteContact(id));
+              }
+            }}
           >
             Delete
           </button>

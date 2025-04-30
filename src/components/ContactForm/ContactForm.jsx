@@ -3,7 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AiFillPhone } from 'react-icons/ai';
 import { IoMdPerson } from 'react-icons/io';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts } from '../../redux/contactsSlice.js';
 import { addContact } from '../../redux/contactsSlice.js';
 import { nanoid } from 'nanoid';
 
@@ -24,8 +25,32 @@ const ContactFormSchema = Yup.object().shape({
 
 export default function ContactForm() {
   const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
 
   const handleSubmit = (values, actions) => {
+    const isDubl = contacts.some(
+      (contact) =>
+        contact.name.toLowerCase() === values.name.toLowerCase() ||
+        contact.number === values.number,
+    );
+
+    if (isDubl) {
+      const haveContact = window.confirm(
+        `A contact with this name or number already exists. Do you want to add another one?`,
+      );
+      if (haveContact) {
+        dispatch(
+          addContact({
+            id: nanoid(),
+            name: values.name,
+            number: values.number,
+          }),
+        );
+      }
+      actions.resetForm();
+      return;
+    }
+
     dispatch(
       addContact({
         id: nanoid(),
